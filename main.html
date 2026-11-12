@@ -924,13 +924,39 @@
       </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="bg-beige-200/80 py-10 text-center border-t border-beige-300/60">
-      <p class="font-script text-3xl text-beige-700">Anh Nghĩa &amp; Ngọc Lam</p>
-      <p class="text-xs text-beige-600 tracking-widest uppercase mt-1">Forever &amp; Always • 27.12.2026</p>
-      <a href="./index.html" class="inline-block mt-4 text-xs text-beige-700 hover:text-beige-900 underline underline-offset-4 transition">
-        ✉️ Xem lại phong bì mở đầu
-      </a>
+    <!-- FOOTER (BỌC TRONG ẢNH KY-NIEM-3 & LỜI CẢM ƠN) -->
+    <footer class="relative min-h-[460px] sm:min-h-[520px] flex items-center justify-center text-center overflow-hidden border-t border-beige-300/60 text-white">
+      <!-- Ảnh nền kỷ niệm 3 (cô dâu chú rể khiêu vũ) -->
+      <img 
+        src="./Images/ky-niem-3.jpg" 
+        alt="Lời cảm ơn từ Anh Nghĩa và Ngọc Lam" 
+        class="absolute inset-0 w-full h-full object-cover object-[center_78%]"
+        loading="lazy"
+      />
+      <!-- Lớp phủ ấm để chữ dễ đọc mà vẫn nổi bật khung cảnh -->
+      <div class="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/75"></div>
+      <div class="absolute inset-0 bg-[#5E4934]/20 mix-blend-multiply"></div>
+
+      <!-- Khung lời cảm ơn -->
+      <div class="relative z-10 max-w-2xl mx-auto px-6 py-14" data-reveal="fade-up">
+        <div class="bg-black/30 backdrop-blur-md border border-white/25 rounded-3xl p-7 sm:p-10 shadow-2xl">
+          <p class="font-script text-4xl sm:text-5xl text-beige-200 mb-1 drop-shadow">Thank You</p>
+          <h2 class="text-2xl sm:text-3xl font-serif font-semibold tracking-wide text-white">Lời Cảm Ơn Chân Thành</h2>
+
+          <div class="w-12 h-[1px] bg-beige-300/70 mx-auto my-4"></div>
+
+          <p class="text-beige-100/95 text-sm sm:text-base leading-relaxed font-light">
+            Cảm ơn gia đình, bạn bè và những người thương yêu đã dành thời gian ghé thăm tấm thiệp nhỏ này và gửi gắm những lời chúc tốt đẹp nhất. Sự hiện diện của bạn chính là món quà vô giá làm nên ngày vui trọn vẹn của tụi mình!
+          </p>
+
+          <p class="font-script text-3xl sm:text-4xl text-beige-100 mt-6 drop-shadow">Anh Nghĩa &amp; Ngọc Lam</p>
+          <p class="text-[11px] text-beige-300 tracking-[0.3em] uppercase mt-1">Forever &amp; Always • 27.12.2026</p>
+
+          <a href="./index.html" class="inline-flex items-center gap-2 mt-6 px-5 py-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/30 text-xs text-beige-100 tracking-wider transition">
+            <span>✉️ Xem lại phong bì mở đầu</span>
+          </a>
+        </div>
+      </div>
     </footer>
 
   </main>
@@ -970,6 +996,23 @@
   </div>
 
   <!-- Scripts -->
+  <!-- NÚT NHẠC NỀN NỔI Ở GÓC DƯỚI PHẢI -->
+  <audio id="bg-music" loop preload="auto" src="./Images/Ng%C3%A0y%20%C4%90%E1%BA%A7u%20Ti%C3%AAn%20-%20%C4%90%E1%BB%A9c%20Ph%C3%BAc%20%5BLyrics%20Video%5D%20M%C6%B0a..mp3"></audio>
+  <button 
+    id="music-toggle-btn" 
+    type="button"
+    aria-label="Bật hoặc tắt nhạc nền"
+    class="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 pl-2.5 pr-4 py-2 rounded-full bg-white/90 backdrop-blur-md border border-beige-300 shadow-lg hover:shadow-xl text-beige-900 transition-all duration-300 cursor-pointer active:scale-95"
+  >
+    <span id="music-disc" class="w-9 h-9 rounded-full bg-gradient-to-tr from-beige-700 via-beige-500 to-beige-300 text-white flex items-center justify-center shadow-inner text-sm animate-spin" style="animation-duration: 6s; animation-play-state: paused;">
+      🎵
+    </span>
+    <span class="text-left leading-tight">
+      <span id="music-status-text" class="block text-[11px] font-semibold text-beige-900">Bật nhạc</span>
+      <span class="block text-[10px] text-beige-600 hidden sm:block">Ngày Đầu Tiên</span>
+    </span>
+  </button>
+
   <script>
     // =====================================================================
     // 1. HIỆU ỨNG DẠT ĐẾN KHI CUỘN (GPU INTERSECTION OBSERVER)
@@ -1399,6 +1442,90 @@
           }, 2000);
         } catch (err) {
           alert(`Số tài khoản: ${accNum}`);
+        }
+      });
+    }
+
+    // =====================================================================
+    // 8. TRÌNH PHÁT NHẠC NỀN (TỰ NỐI TIẾP TỪ PHONG BÌ + NÚT BẬT/TẮT NỔI)
+    // =====================================================================
+    const bgMusic = document.getElementById('bg-music');
+    const musicToggleBtn = document.getElementById('music-toggle-btn');
+    const musicDisc = document.getElementById('music-disc');
+    const musicStatusText = document.getElementById('music-status-text');
+
+    function updateMusicUI(isPlaying) {
+      if (!musicDisc || !musicStatusText) return;
+      if (isPlaying) {
+        musicDisc.style.animationPlayState = 'running';
+        musicStatusText.textContent = 'Đang phát';
+      } else {
+        musicDisc.style.animationPlayState = 'paused';
+        musicStatusText.textContent = 'Bật nhạc';
+      }
+    }
+
+    function tryPlayMusic() {
+      if (!bgMusic) return;
+      bgMusic.volume = 0.65;
+      const playPromise = bgMusic.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          updateMusicUI(true);
+          try { sessionStorage.setItem('weddingMusicShouldPlay', '1'); } catch (e) {}
+        }).catch(() => {
+          // Nếu trình duyệt di động chặn tự phát sau chuyển trang, tự phát ở lần chạm đầu tiên
+          updateMusicUI(false);
+          const unlockAudio = () => {
+            bgMusic.play().then(() => {
+              updateMusicUI(true);
+              try { sessionStorage.setItem('weddingMusicShouldPlay', '1'); } catch (e) {}
+            }).catch(() => {});
+          };
+          document.addEventListener('pointerdown', unlockAudio, { once: true });
+          document.addEventListener('keydown', unlockAudio, { once: true });
+        });
+      }
+    }
+
+    if (bgMusic) {
+      // Khôi phục đoạn nhạc đang phát dở từ trang phong bì
+      try {
+        const savedTime = parseFloat(sessionStorage.getItem('weddingMusicTime') || '0');
+        if (!isNaN(savedTime) && savedTime > 0) {
+          bgMusic.addEventListener('loadedmetadata', () => {
+            if (savedTime < bgMusic.duration) {
+              bgMusic.currentTime = savedTime + 0.5;
+            }
+          }, { once: true });
+        }
+        if (sessionStorage.getItem('weddingMusicShouldPlay') !== '0') {
+          tryPlayMusic();
+        }
+      } catch (e) {
+        tryPlayMusic();
+      }
+
+      // Lưu lại thời gian hiện tại phòng trường hợp bấm xem lại phong bì
+      window.addEventListener('beforeunload', () => {
+        try {
+          sessionStorage.setItem('weddingMusicTime', String(bgMusic.currentTime || 0));
+        } catch (e) {}
+      });
+    }
+
+    if (musicToggleBtn && bgMusic) {
+      musicToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (bgMusic.paused) {
+          bgMusic.play().then(() => {
+            updateMusicUI(true);
+            try { sessionStorage.setItem('weddingMusicShouldPlay', '1'); } catch (err) {}
+          }).catch(() => {});
+        } else {
+          bgMusic.pause();
+          updateMusicUI(false);
+          try { sessionStorage.setItem('weddingMusicShouldPlay', '0'); } catch (err) {}
         }
       });
     }

@@ -351,6 +351,9 @@
     </button>
   </div>
 
+  <!-- Nhạc nền mở đầu (Ngày Đầu Tiên - Đức Phúc) -->
+  <audio id="bg-music" loop preload="auto" src="./Images/Ng%C3%A0y%20%C4%90%E1%BA%A7u%20Ti%C3%AAn%20-%20%C4%90%E1%BB%A9c%20Ph%C3%BAc%20%5BLyrics%20Video%5D%20M%C6%B0a..mp3"></audio>
+
   <script>
     const envelope = document.getElementById('envelope');
     const tapOpenBtn = document.getElementById('tap-open-btn');
@@ -359,12 +362,19 @@
     const enterAction = document.getElementById('enter-action');
     const enterNowBtn = document.getElementById('enter-now-btn');
     const pageTransition = document.getElementById('page-transition');
+    const bgMusic = document.getElementById('bg-music');
 
     let opened = false;
     let redirectTimer = null;
 
     function goToMainPage() {
       clearTimeout(redirectTimer);
+      try {
+        sessionStorage.setItem('weddingMusicShouldPlay', '1');
+        if (bgMusic) {
+          sessionStorage.setItem('weddingMusicTime', String(bgMusic.currentTime || 0));
+        }
+      } catch (e) {}
       pageTransition.classList.remove('opacity-0');
       pageTransition.classList.add('opacity-100');
       setTimeout(() => {
@@ -375,6 +385,11 @@
     function openEnvelope() {
       if (opened) return;
       opened = true;
+
+      if (bgMusic) {
+        bgMusic.volume = 0.7;
+        bgMusic.play().catch(() => {});
+      }
 
       envelope.classList.add('is-opened');
       bottomPrompt.style.opacity = '0';
