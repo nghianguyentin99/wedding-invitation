@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thiệp Mời Cưới - Anh Nghĩa & Ngọc Lam</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            beige: {
+              50: '#FDFBF7',
+              100: '#F7F2E9',
+              200: '#EFE6D5',
+              300: '#E2D2B8',
+              400: '#CEB693',
+              500: '#B5966D',
+              600: '#9A7B56',
+              700: '#7D6143',
+              800: '#5E4934',
+              900: '#3E3022',
+            }
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'serif'],
+            script: ['"Great Vibes"', 'cursive'],
+            sans: ['"Be Vietnam Pro"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #F7F2E9;
+      color: #3E3022;
+      overflow: hidden;
+      background-image:
+        radial-gradient(circle at 20% 25%, rgba(212, 184, 148, 0.35) 0%, transparent 50%),
+        radial-gradient(circle at 80% 75%, rgba(181, 150, 109, 0.25) 0%, transparent 50%);
+    }
+
+    /* Hạt sáng / cánh hoa rơi nhẹ */
+    .petal {
+      position: fixed;
+      pointer-events: none;
+      z-index: 5;
+      background: radial-gradient(circle, rgba(212, 184, 148, 0.75) 0%, rgba(239, 230, 213, 0.2) 70%, transparent 100%);
+      border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+      animation: floatPetal linear infinite;
+    }
+    @keyframes floatPetal {
+      0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+      15% { opacity: 0.7; }
+      85% { opacity: 0.7; }
+      100% { transform: translateY(105vh) translateX(50px) rotate(360deg); opacity: 0; }
+    }
+
+    /* =====================================================================
+       BỨC THƯ 3D (ENVELOPE ANIMATION)
+    ====================================================================== */
+    .envelope-scene {
+      perspective: 1200px;
+    }
+
+    .envelope-wrapper {
+      position: relative;
+      width: min(88vw, 390px);
+      height: min(58vw, 255px);
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-style: preserve-3d;
+    }
+
+    .envelope-wrapper:not(.is-opened):hover {
+      transform: translateY(-6px) scale(1.02);
+    }
+
+    /* Mặt lưng phong bì bên trong */
+    .envelope-back {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, #E5D5BC, #D6C1A0);
+      border-radius: 14px;
+      box-shadow: 0 25px 50px -12px rgba(62, 48, 34, 0.32);
+      z-index: 1;
+    }
+
+    /* Nắp phong bì (Lật 3D lên trên khi mở) */
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 55%;
+      z-index: 12;
+      transform-origin: top center;
+      transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.35s;
+      filter: drop-shadow(0 6px 10px rgba(62, 48, 34, 0.14));
+    }
+
+    .envelope-flap-shape {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #EFE6D5 0%, #DFCEB2 100%);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+    }
+
+    .envelope-wrapper.is-opened .envelope-flap {
+      transform: rotateX(180deg);
+      z-index: 2;
+    }
+
+    /* Túi mặt trước phong bì (Che phần đáy của ảnh & thư bên trong) */
+    .envelope-front {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      border-radius: 14px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    /* Hai cánh gấp trái/phải + tam giác đáy tạo phong bì thực tế */
+    .envelope-pocket-left {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, #EFE6D5, #E4D3B7);
+      clip-path: polygon(0 0, 52% 52%, 0 100%);
+    }
+    .envelope-pocket-right {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(240deg, #EFE6D5, #E0CEB0);
+      clip-path: polygon(100% 0, 48% 52%, 100% 100%);
+    }
+    .envelope-pocket-bottom {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, #F6EFE2 0%, #E7D8BE 100%);
+      clip-path: polygon(0 100%, 50% 45%, 100% 100%);
+      filter: drop-shadow(0 -2px 6px rgba(62, 48, 34, 0.08));
+    }
+
+    /* Con dấu sáp (Wax Seal) ở giữa nắp thư */
+    .wax-seal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -35%);
+      width: 62px;
+      height: 62px;
+      border-radius: 9999px;
+      background: radial-gradient(circle at 35% 35%, #C9A679, #9A7B56 65%, #75593B 100%);
+      border: 2px solid rgba(255, 248, 235, 0.5);
+      box-shadow: 0 6px 16px rgba(62, 48, 34, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.35);
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.45s ease, opacity 0.45s ease;
+    }
+
+    .envelope-wrapper.is-opened .wax-seal {
+      transform: translate(-50%, -35%) scale(1.25);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Thư giấy nhỏ trồi lên ở giữa */
+    .inner-letter {
+      position: absolute;
+      left: 50%;
+      bottom: 12px;
+      width: 82%;
+      height: 82%;
+      transform: translateX(-50%) translateY(0);
+      background: #FDFBF7;
+      border: 1px solid #E2D2B8;
+      border-radius: 10px;
+      z-index: 4;
+      box-shadow: 0 4px 15px rgba(62, 48, 34, 0.12);
+      transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.35s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 18px;
+    }
+
+    .envelope-wrapper.is-opened .inner-letter {
+      transform: translateX(-50%) translateY(-48%);
+    }
+
+    /* =====================================================================
+       2 ẢNH POLAROID CÔ DÂU & CHÚ RỂ TÒI RA CHĨA CHÉO VỀ 2 BÊN
+    ====================================================================== */
+    .photo-card {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      width: min(40vw, 172px);
+      background: #FFFFFF;
+      padding: 7px 7px 22px 7px;
+      border-radius: 10px;
+      box-shadow: 0 18px 36px -8px rgba(62, 48, 34, 0.32);
+      border: 1px solid #E2D2B8;
+      z-index: 6;
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px) scale(0.75) rotate(0deg);
+      transition:
+        transform 0.95s cubic-bezier(0.18, 1.15, 0.35, 1) 0.45s,
+        opacity 0.55s ease 0.45s;
+      pointer-events: none;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: min(44vw, 185px);
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    /* Khi mở thư: Ảnh Chú Rể tòi ra chĩa chéo sang TRÁI */
+    .envelope-wrapper.is-opened .photo-groom {
+      opacity: 1;
+      transform: translateX(-118%) translateY(-108%) scale(1) rotate(-14deg);
+    }
+
+    /* Khi mở thư: Ảnh Cô Dâu tòi ra chĩa chéo sang PHẢI */
+    .envelope-wrapper.is-opened .photo-bride {
+      opacity: 1;
+      transform: translateX(18%) translateY(-108%) scale(1) rotate(14deg);
+    }
+
+    /* Nhịp thở nhẹ mời chạm */
+    @keyframes gentlePulse {
+      0%, 100% { opacity: 0.75; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-4px); }
+    }
+    .tap-hint {
+      animation: gentlePulse 2.2s ease-in-out infinite;
+    }
+
+    /* Màn chuyển cảnh mềm mại khi đi vào index.html */
+    #page-transition {
+      transition: opacity 0.7s ease;
+    }
+  </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col items-center justify-center relative px-4 select-none">
+
+  <!-- Container cánh hoa -->
+  <div id="petals-container" aria-hidden="true"></div>
+
+  <!-- Màn chuyển cảnh khi vào trang chính -->
+  <div id="page-transition" class="fixed inset-0 bg-[#FDFBF7] z-50 pointer-events-none opacity-0"></div>
+
+  <!-- Tiêu đề nhẹ phía trên -->
+  <div id="top-heading" class="text-center mb-24 sm:mb-28 transition-all duration-700 z-20">
+    <p class="text-[11px] uppercase tracking-[0.35em] text-beige-600 mb-1">Save The Date • 27.12.2026</p>
+    <h1 class="font-script text-4xl sm:text-5xl text-beige-800">Anh Nghĩa &amp; Ngọc Lam</h1>
+  </div>
+
+  <!-- BỨC THƯ 3D + 2 ẢNH TÒI RA CHĨA CHÉO 2 BÊN -->
+  <div class="envelope-scene relative z-20 mt-4">
+    <div id="envelope" class="envelope-wrapper" role="button" tabindex="0" aria-label="Chạm để mở thiệp cưới">
+      
+      <!-- Mặt lưng bên trong phong bì -->
+      <div class="envelope-back"></div>
+
+      <!-- ẢNH 1: CHÚ RỂ (CHĨA CHÉO SANG TRÁI KHI MỞ THƯ) -->
+      <div class="photo-card photo-groom">
+        <img 
+          src="./Images/ky-niem-10.jpg" 
+          onerror="this.onerror=null; this.src='./Images/ky-niem-1.jpg'; this.style.objectPosition='15% 35%';" 
+          alt="Chú Rể Anh Nghĩa" 
+        />
+        <p class="font-script text-xl text-beige-800 text-center mt-1.5 leading-none">Anh Nghĩa</p>
+      </div>
+
+      <!-- ẢNH 2: CÔ DÂU (CHĨA CHÉO SANG PHẢI KHI MỞ THƯ) -->
+      <div class="photo-card photo-bride">
+        <img 
+          src="./Images/ky-niem-9.jpg" 
+          onerror="this.onerror=null; this.src='./Images/ky-niem-1.jpg'; this.style.objectPosition='85% 35%';" 
+          alt="Cô Dâu Ngọc Lam" 
+        />
+        <p class="font-script text-xl text-beige-800 text-center mt-1.5 leading-none">Ngọc Lam</p>
+      </div>
+
+      <!-- Tấm thiệp giấy trồi nhẹ ở chính giữa -->
+      <div class="inner-letter text-center px-4">
+        <span class="text-[9px] uppercase tracking-[0.3em] text-beige-500">Wedding Invitation</span>
+        <p class="font-serif italic text-beige-800 text-base sm:text-lg mt-1 font-semibold">Trân Trọng Kính Mời</p>
+        <div class="w-8 h-[1px] bg-beige-400 my-1.5"></div>
+        <p class="text-[11px] text-beige-600">Cùng chung vui ngày hạnh phúc</p>
+      </div>
+
+      <!-- Túi mặt trước phong bì -->
+      <div class="envelope-front">
+        <div class="envelope-pocket-left"></div>
+        <div class="envelope-pocket-right"></div>
+        <div class="envelope-pocket-bottom"></div>
+      </div>
+
+      <!-- Nắp phong bì 3D -->
+      <div class="envelope-flap">
+        <div class="envelope-flap-shape"></div>
+      </div>
+
+      <!-- Con dấu sáp -->
+      <div class="wax-seal">
+        <span class="font-script text-2xl text-beige-50 drop-shadow">N&amp;L</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Dòng chữ "Chạm để mở" bên dưới bức thư -->
+  <div id="bottom-prompt" class="mt-10 text-center z-20 transition-all duration-500">
+    <button 
+      id="tap-open-btn" 
+      type="button" 
+      class="tap-hint inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-beige-300 shadow-sm text-beige-800 text-xs sm:text-sm uppercase tracking-[0.22em] hover:bg-white transition cursor-pointer"
+    >
+      <span>✉️ Chạm để mở thiệp</span>
+    </button>
+    <p class="text-[11px] text-beige-600 mt-3 opacity-80">Nhấn vào phong thư để khám phá câu chuyện của tụi mình</p>
+  </div>
+
+  <!-- Nút vào thẳng trang chính hiện ra sau khi mở thư -->
+  <div id="enter-action" class="mt-8 text-center z-20 opacity-0 pointer-events-none transition-all duration-500">
+    <button 
+      id="enter-now-btn"
+      type="button"
+      class="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-beige-600 hover:bg-beige-700 text-white text-xs sm:text-sm font-medium tracking-widest uppercase shadow-md transition cursor-pointer"
+    >
+      <span>Đang mở thiệp cưới... Vào ngay →</span>
+    </button>
+  </div>
+
+  <script>
+    const envelope = document.getElementById('envelope');
+    const tapOpenBtn = document.getElementById('tap-open-btn');
+    const bottomPrompt = document.getElementById('bottom-prompt');
+    const topHeading = document.getElementById('top-heading');
+    const enterAction = document.getElementById('enter-action');
+    const enterNowBtn = document.getElementById('enter-now-btn');
+    const pageTransition = document.getElementById('page-transition');
+
+    let opened = false;
+    let redirectTimer = null;
+
+    function goToMainPage() {
+      clearTimeout(redirectTimer);
+      pageTransition.classList.remove('opacity-0');
+      pageTransition.classList.add('opacity-100');
+      setTimeout(() => {
+        window.location.href = './main.html';
+      }, 650);
+    }
+
+    function openEnvelope() {
+      if (opened) return;
+      opened = true;
+
+      envelope.classList.add('is-opened');
+      bottomPrompt.style.opacity = '0';
+      bottomPrompt.style.pointerEvents = 'none';
+      topHeading.style.opacity = '0.25';
+      topHeading.style.transform = 'translateY(-16px)';
+
+      setTimeout(() => {
+        enterAction.classList.remove('opacity-0', 'pointer-events-none');
+      }, 750);
+
+      // Cho khách ngắm 2 bức ảnh tòi ra ~2.5 giây rồi tự chuyển mượt vào main.html
+      redirectTimer = setTimeout(goToMainPage, 2500);
+    }
+
+    envelope.addEventListener('click', openEnvelope);
+    envelope.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openEnvelope();
+      }
+    });
+    tapOpenBtn.addEventListener('click', openEnvelope);
+    enterNowBtn.addEventListener('click', goToMainPage);
+
+    // Tạo cánh hoa bay nhẹ
+    const petalsContainer = document.getElementById('petals-container');
+    for (let i = 0; i < 12; i++) {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      const size = Math.random() * 12 + 8;
+      petal.style.width = `${size}px`;
+      petal.style.height = `${size * 0.8}px`;
+      petal.style.left = `${Math.random() * 100}vw`;
+      petal.style.animationDuration = `${Math.random() * 12 + 12}s`;
+      petal.style.animationDelay = `${Math.random() * 10}s`;
+      petalsContainer.appendChild(petal);
+    }
+  </script>
+</body>
+</html>
